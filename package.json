@@ -1,0 +1,34 @@
+{
+    "name":             "rescue",
+    "version":          "9.9.9",
+    "author":           "Alan Gutierrez <alan@prettyrobots.com>",
+    "description":      "Catch and propagate errors in user provided callback.",
+    "keywords":
+    [
+                        "error", "exception", "callback"
+    ],
+    "contributors":     [],
+    "homepage":         "http://bigeasy.github.io/rescue",
+    "bugs":             "https://github.com/bigeasy/rescue/issues",
+    "licenses":
+    [{
+                        "type": "MIT",
+                        "url": "http://github.com/bigeasy/rescue/raw/master/LICENSE"
+    }],
+    "repository":
+    {
+                        "type": "git",
+                        "url": "http://github.com/bigeasy/rescue.git"
+    },
+    "dependencies":
+    {
+    },
+    "devDependencies":
+    {
+                        "proof":              "0.0.45"
+    },
+    "scripts":
+    {
+                        "test": "proof platform win32 && proof test */*/*.t.js || t/test"
+    }
+}
