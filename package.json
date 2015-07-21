@@ -15,6 +15,7 @@
                         "type": "MIT",
                         "url": "http://github.com/bigeasy/rescue/raw/master/LICENSE"
     }],
+    "main":             "rescue",
     "repository":
     {
                         "type": "git",
