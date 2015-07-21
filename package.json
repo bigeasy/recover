@@ -2,7 +2,7 @@
     "name":             "rescue",
     "version":          "0.0.1",
     "author":           "Alan Gutierrez <alan@prettyrobots.com>",
-    "description":      "Catch and propagate errors in user provided callback.",
+    "description":      "Restart a long running error-first callback function on error.",
     "keywords":
     [
                         "error", "exception", "callback"
@@ -10,11 +10,7 @@
     "contributors":     [],
     "homepage":         "http://bigeasy.github.io/rescue",
     "bugs":             "https://github.com/bigeasy/rescue/issues",
-    "licenses":
-    [{
-                        "type": "MIT",
-                        "url": "http://github.com/bigeasy/rescue/raw/master/LICENSE"
-    }],
+    "license":          "MIT",
     "main":             "rescue",
     "repository":
     {

@@ -1,6 +1,6 @@
-Skip
+Rescue
 
-Catch and propagate errors in user provided callback.
+Restart a long running error-first callback function on error.
 
     Discussion:     http://github.com/bigeasy/rescue/issues/1
 
