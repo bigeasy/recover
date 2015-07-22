@@ -1,62 +1,39 @@
-var ok = require('assert').ok,
-    __slice = [].slice
+var cadence = require('cadence/redux')
+var Operation = require('operation')
 
-function Rescue () {
-    this.seen = []
+function Rescue (options) {
+    this._operation = new Operation(options.operation)
+    if (options.rescue instanceof RegExp) {
+        this._rescue = new Operation(function (error) {
+            return options.rescue.test(error.code || error.message)
+        })
+    } else {
+        this._rescue = new Operation(options.rescue)
+    }
+    this._vargs = options.vargs || []
 }
 
-Rescue.prototype.validator = function (callback, janitor) {
-    var rescue = this
-    return function (forward) {
-        return rescue.validate(callback, forward, janitor)
+Rescue.prototype.run = cadence(function (async) {
+    var stats = this.stats = {
+        error: null,
+        start: null,
+        duration: null,
+        iteration: -1
     }
-}
-
-Rescue.prototype.validate = function (callback, forward, janitor) {
-    ok(typeof forward == 'function', 'no forward function')
-    ok(typeof callback == 'function','no callback function')
-
-    var rescue = this
-
-    delete rescue.thrown
-    rescue.seen.length = 0
-
-    return function (error) {
-        if (error) {
-            cleanup(error)
-        } else {
-            try {
-                forward.apply(null, __slice.call(arguments, 1))
-            } catch (error) {
-                cleanup(error)
-            }
+    var loop = async([function () {
+        stats.iteration++
+        stats.start = Date.now()
+        this._operation.apply(this._vargs.concat(async()))
+    }, function (error) {
+        stats.error = error
+        stats.duration = Date.now() - stats.start
+        if (this._rescue.apply([ error ])) {
+            return [ loop() ]
         }
-    }
-
-    function cleanup (error) {
-        if (janitor) {
-            if (!rescue.seen.filter(function (seen) { return seen === janitor }).pop()) {
-                rescue.seen.push(janitor)
-                janitor(error)
-                if (janitor.length) return
-            }
-        }
-
-        if (rescue.thrown === error) {
-            throw error
-        }
-
-        rescue.callback(callback, error)
-    }
-}
-
-Rescue.prototype.callback = function (callback) {
-    try {
-        callback.apply(null, __slice.call(arguments, 1))
-    } catch (error) {
-        this.thrown = error
         throw error
-    }
-}
+    }], function () {
+        return [ loop ]
+    })()
+})
 
 module.exports = Rescue
