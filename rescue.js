@@ -1,4 +1,4 @@
-var cadence = require('cadence/redux')
+var cadence = require('cadence')
 var Operation = require('operation')
 
 function Rescue (options) {
@@ -28,11 +28,11 @@ Rescue.prototype.run = cadence(function (async) {
         stats.error = error
         stats.duration = Date.now() - stats.start
         if (this._rescue.apply([ error ])) {
-            return [ loop() ]
+            return [ loop.continue ]
         }
         throw error
     }], function () {
-        return [ loop ]
+        return [ loop.break ]
     })()
 })
 
