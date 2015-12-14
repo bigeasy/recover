@@ -1,51 +1,33 @@
-require('proof')(2, require('cadence')(prove))
+require('proof')(4, require('cadence')(prove))
 
 function prove (async, assert) {
     var Rescue = new require('../..')
+    var cadence = require('cadence')
 
-    function Service () {
-    }
+    var rescuer = new Rescue(/^EPIPE$/)
 
-    var error = new Error
-    error.code = 'EPIPE'
-    Service.prototype.run = function (callback) {
-        if (error) {
-            callback(error)
-            error = null
-        } else {
-            callback()
-        }
-    }
-
-    Service.prototype.rescue = function () {
-    }
-
-    var service = new Service
-    var rescue
+    assert(rescuer, 'require')
 
     async(function () {
-        rescue = new Rescue({
-            operation: { object: service, method: 'run' },
-            rescue: /^EPIPE$/
-        })
-        rescue.run(async())
-    }, [function () {
-        error = new Error('thrown')
-        rescue = new Rescue({
-            operation: { object: service, method: 'run' },
-            rescue: /^EPIPE$/
-        })
-        rescue.run(async())
-    }, function (error) {
-        assert(error.message, 'thrown', 'regex thrown')
-    }], [function () {
-        error = new Error('thrown')
-        rescue = new Rescue({
-            operation: { object: service, method: 'run' },
-            rescue: function () { return false }
-        })
-        rescue.run(async())
-    }, function (error) {
-        assert(error.message, 'thrown', 'function thrown')
-    }])
+        var count = 0
+        rescuer.rescue(cadence(function (async) {
+            if (count++ == 1) {
+                throw new Error('badness')
+            } else {
+                var error = new Error
+                error.code = 'EPIPE'
+                throw error
+            }
+        }))(async())
+    }, function () {
+        rescuer.rescue(cadence(function (async) {
+            return 1
+        }))(async())
+    }, function (one) {
+        assert(one, 1, 'return')
+        new Rescue(function (context, error) {
+            assert(context, 'context', 'context')
+            assert(error.message, 'message', 'error message')
+        }).rescue('context', cadence(function (async) { throw new Error('message') }))(async())
+    })
 }

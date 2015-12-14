@@ -1,39 +1,35 @@
 var cadence = require('cadence')
 var Operation = require('operation')
+var slice = [].slice
 
-function Rescue (options) {
-    this._operation = new Operation(options.operation)
-    if (options.rescue instanceof RegExp) {
+function Rescue (operation) {
+    if (operation instanceof RegExp) {
         this._rescue = new Operation(function (error) {
-            return options.rescue.test(error.code || error.message)
+            return operation.test(error.code || error.message)
         })
     } else {
-        this._rescue = new Operation(options.rescue)
+        this._rescue = new Operation(operation)
     }
-    this._vargs = options.vargs || []
 }
 
-Rescue.prototype.run = cadence(function (async) {
-    var stats = this.stats = {
-        error: null,
-        start: null,
-        duration: null,
-        iteration: -1
-    }
-    var loop = async([function () {
-        stats.iteration++
-        stats.start = Date.now()
-        this._operation.apply(this._vargs.concat(async()))
-    }, function (error) {
-        stats.error = error
-        stats.duration = Date.now() - stats.start
-        if (this._rescue.apply([ error ])) {
-            return [ loop.continue ]
-        }
-        throw error
-    }], function () {
-        return [ loop.break ]
-    })()
-})
+Rescue.prototype.rescue = function () {
+    var rescue = this._rescue,
+        rescueVargs = slice.call(arguments),
+        operation = new Operation(rescueVargs.pop())
+    return cadence(function (async) {
+        var vargs = slice.call(arguments, 1)
+        var loop = async([function () {
+            operation.apply(vargs.concat(async()))
+        }, function (error) {
+            if (rescue.apply(rescueVargs.concat(error))) {
+                return [ loop.continue ]
+            } else {
+                return [ loop.break ]
+            }
+        }], [], function (vargs) {
+            return [ loop.break ].concat(vargs)
+        })()
+    })
+}
 
 module.exports = Rescue

@@ -19,12 +19,12 @@
     },
     "dependencies":
     {
-                        "operation":            "0.0.2",
-                        "cadence":              "0.4.0"
+                        "operation":            "0.0.4",
+                        "cadence":              "0.4.3"
     },
     "devDependencies":
     {
-                        "proof":                "0.0.56"
+                        "proof":                "0.0.57"
     },
     "scripts":
     {
