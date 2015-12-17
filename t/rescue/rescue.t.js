@@ -29,5 +29,18 @@ function prove (async, assert) {
             assert(context, 'context', 'context')
             assert(error.message, 'message', 'error message')
         }).rescue('context', cadence(function (async) { throw new Error('message') }))(async())
+    }, function () {
+        var count = 0
+        new Rescue(function (error) {
+            if (count == 2) {
+                return false
+            } else {
+                return count++
+            }
+        }).rescue(cadence(function () { throw new Error('message') }))(async())
+    }, function () {
+        var rescuer = new Rescue(function (error) { return 864e6 })
+        rescuer.rescue(cadence(function () { throw new Error('message') }))(function () {})
+        rescuer.scram()
     })
 }
