@@ -27,6 +27,7 @@ Rescue.prototype.rescue = function () {
             async(function () {
                 if (this._backoff) {
                     timeout = setTimeout(async(), this._backoff)
+                    timeout.unref()
                     this._timeouts.push(timeout)
                 }
             }, function () {
@@ -57,6 +58,7 @@ Rescue.prototype.rescue = function () {
     }).bind(this)
 }
 
+// TODO Scream is essentially `unref`, and is outgoing.
 Rescue.prototype.scram = function () {
     this._timeouts.forEach(clearTimeout)
     this._timeouts.length = 0
