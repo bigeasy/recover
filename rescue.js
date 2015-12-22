@@ -7,6 +7,8 @@ function Rescue (operation) {
         this._rescue = new Operation(function (error) {
             return operation.test(error.code || error.message)
         })
+    } else if (typeof operation == 'number') {
+        this._rescue = new Operation(function () { return operation })
     } else {
         this._rescue = new Operation(operation)
     }

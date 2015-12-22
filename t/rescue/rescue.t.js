@@ -39,7 +39,7 @@ function prove (async, assert) {
             }
         }).rescue(cadence(function () { throw new Error('message') }))(async())
     }, function () {
-        var rescuer = new Rescue(function (error) { return 864e6 })
+        var rescuer = new Rescue(864e6)
         rescuer.rescue(cadence(function () { throw new Error('message') }))(function () {})
         rescuer.scram()
     })
