@@ -19,8 +19,8 @@
     },
     "dependencies":
     {
-                        "operation":            "1.0.x",
-                        "cadence":              "1.0.x"
+                        "cadence":              "1.0.x",
+                        "operation":            "1.0.x"
     },
     "devDependencies":
     {
