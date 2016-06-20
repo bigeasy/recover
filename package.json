@@ -1,5 +1,5 @@
 {
-    "name":             "rescue",
+    "name":             "recover",
     "version":          "1.0.1",
     "author":           "Alan Gutierrez <alan@prettyrobots.com>",
     "description":      "Restart a long running error-first callback function on error.",
@@ -26,6 +26,7 @@
     {
                         "proof":                "1.x"
     },
+    "main":             "recover",
     "scripts":
     {
                         "test": "proof platform win32 && proof test */*/*.t.js || t/test"
