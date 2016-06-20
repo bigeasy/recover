@@ -1,6 +1,6 @@
 {
     "name":             "recover",
-    "version":          "1.0.1",
+    "version":          "2.0.0",
     "author":           "Alan Gutierrez <alan@prettyrobots.com>",
     "description":      "Restart a long running error-first callback function on error.",
     "keywords":
