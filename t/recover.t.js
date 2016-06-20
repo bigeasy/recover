@@ -1,7 +1,7 @@
 require('proof')(4, require('cadence')(prove))
 
 function prove (async, assert) {
-    var Rescue = new require('../..')
+    var Rescue = new require('..')
     var cadence = require('cadence')
 
     var rescuer = new Rescue(/^EPIPE$/)
