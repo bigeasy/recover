@@ -30,6 +30,7 @@ function prove (async, assert) {
             assert(error.message, 'message', 'error message')
         }).rescue('context', cadence(function (async) { throw new Error('message') }))(async())
     }, function () {
+        return [ async.break ]
         var count = 0
         new Rescue(function (error) {
             if (count == 2) {
@@ -38,6 +39,7 @@ function prove (async, assert) {
                 return count++
             }
         }).rescue(cadence(function () { throw new Error('message') }))(async())
+        console.log('here')
     }, function () {
         var rescuer = new Rescue(864e6)
         rescuer.rescue(cadence(function () { throw new Error('message') }))(function () {})
