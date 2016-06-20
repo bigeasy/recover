@@ -8,14 +8,13 @@
                         "error", "exception", "callback"
     ],
     "contributors":     [],
-    "homepage":         "http://bigeasy.github.io/rescue",
-    "bugs":             "https://github.com/bigeasy/rescue/issues",
+    "homepage":         "http://bigeasy.github.io/recover",
+    "bugs":             "https://github.com/bigeasy/recover/issues",
     "license":          "MIT",
-    "main":             "rescue",
     "repository":
     {
                         "type": "git",
-                        "url": "http://github.com/bigeasy/rescue.git"
+                        "url": "http://github.com/bigeasy/recover.git"
     },
     "dependencies":
     {
