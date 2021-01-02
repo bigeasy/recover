@@ -1,33 +1,35 @@
 {
-    "name":             "recover",
-    "version":          "2.0.0",
-    "author":           "Alan Gutierrez <alan@prettyrobots.com>",
-    "description":      "Restart a long running error-first callback function on error.",
+    "name":                 "recover",
+    "version":              "2.0.0",
+    "description":
+
+      "Recover from errors from a Turnstie work queue before they initiate a shutdown.",
+
     "keywords":
     [
-                        "error", "exception", "callback"
+                            "errors", "queue", "async", "await"
     ],
-    "contributors":     [],
-    "homepage":         "http://bigeasy.github.io/recover",
-    "bugs":             "https://github.com/bigeasy/recover/issues",
-    "license":          "MIT",
+    "author":               "Alan Gutierrez <alan@prettyrobots.com>",
+    "homepage":             "https://github.com/bigeasy/recover",
+    "bugs":                 "https://github.com/bigeasy/recover/issues",
+    "license":              "MIT",
     "repository":
     {
-                        "type": "git",
-                        "url": "http://github.com/bigeasy/recover.git"
+                            "type": "git",
+                            "url": "bigeasy/recover"
     },
     "dependencies":
     {
-                        "cadence":              "1.x",
-                        "operation":            "1.x"
     },
     "devDependencies":
     {
-                        "proof":                "1.x"
+                            "destructible":                 "7.0.0-alpha.27",
+                            "proof":                        "^9.0.2",
+                            "turnstile":                    "6.0.0-alpha.42"
     },
-    "main":             "recover",
+    "main":                 "recover",
     "scripts":
     {
-                        "test": "proof platform win32 && proof test */*/*.t.js || t/test"
+                            "test": "proof test/*.t.js"
     }
 }

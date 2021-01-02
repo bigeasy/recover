@@ -1,5 +1,6 @@
-/.nyc_output
-/.wiseguy
+/.*
+/*.md
 /coverage
 /docs
 /node_modules
+/test

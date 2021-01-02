@@ -1,67 +1,43 @@
-var cadence = require('cadence')
-var Operation = require('operation')
-var slice = [].slice
+const Turnstile = require('turnstile')
 
-function Rescue (operation) {
-    if (operation instanceof RegExp) {
-        this._rescue = new Operation(function (error) {
-            return operation.test(error.code || error.message)
-        })
-    } else if (typeof operation == 'number') {
-        this._rescue = new Operation(function () { return operation })
-    } else {
-        this._rescue = new Operation(operation)
+const events = require('events')
+
+class Eject extends events.EventEmitter {
+    constructor (turnstile) {
+        super()
+        this._turnstile = turnstile
     }
-    this._backoff = 0
-    this._timeouts = []
-}
 
-Rescue.prototype.rescue = function () {
-    var rescue = this._rescue,
-        rescueVargs = slice.call(arguments),
-        operation = new Operation(rescueVargs.pop())
-    return cadence(function (async) {
-        var vargs = slice.call(arguments, 1)
-        var timeout
-        var loop = async([function () {
-            async(function () {
-                if (this._backoff) {
-                    timeout = setTimeout(async(), this._backoff)
-                    timeout.unref()
-                    this._timeouts.push(timeout)
-                }
-            }, function () {
-                if (timeout) {
-                    var index = this._timeouts.indexOf(timeout)
-                    this._timeouts.splice(index, 1)
-                }
-                operation.apply(vargs.concat(async()))
-            }, function () {
-                this._backoff = 0
-            })
-        }, function (error) {
-            var rescued = rescue.apply(rescueVargs.concat(error))
-            if (rescued != null) {
-                if (typeof rescued == 'number') {
-                    this._backoff = rescued
-                    rescued = true
-                }
+    get health () {
+        return this._turnstile.health
+    }
+
+    get size () {
+        return this._turnstile.size
+    }
+
+    unqueue (entry) {
+        return this._turnstile.unqueue(entry)
+    }
+
+    drain () {
+        return this._turnstile.drain()
+    }
+
+    enter (...vargs) {
+        let index = 0
+        const entry = Turnstile.options(vargs)
+        const { object, worker } = entry
+        entry.object = null
+        entry.worker = async work => {
+            try {
+                await worker.call(object, work)
+            } catch (error) {
+                this.emit('error', error)
             }
-            if (rescued) {
-                return [ loop.continue ]
-            } else {
-                return [ loop.break ]
-            }
-        }], [], function (vargs) {
-            return [ loop.break ].concat(vargs)
-        })()
-    }).bind(this)
+        }
+        return this._turnstile.enter.apply(this._turnstile, Turnstile.vargs(entry))
+    }
 }
 
-// TODO Scram is essentially `unref`, and is outgoing.
-Rescue.prototype.scram = function () {
-    this._timeouts.forEach(clearTimeout)
-    this._timeouts.length = 0
-}
-
-module.exports = Rescue
+module.exports = Eject
